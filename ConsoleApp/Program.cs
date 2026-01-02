@@ -10,14 +10,12 @@ namespace ConsoleApp
     {
         private static readonly Solution s = new();
 
-
         private static void T1()
         {
         }
 
         private static void RunTests()
         {
-
             Console.WriteLine("Running tests");
 
             T1();
