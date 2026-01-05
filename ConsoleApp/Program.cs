@@ -106,8 +106,8 @@ namespace ConsoleApp
         {
             Console.WriteLine("Running tests");
 
-            T2();
-            // T1();
+            T1();
+            // T2();
             // T1();
 
             Console.WriteLine("Finished tests");
