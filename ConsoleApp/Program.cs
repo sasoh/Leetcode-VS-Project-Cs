@@ -1,27 +1,25 @@
 ﻿using System;
+using System.Net.Security;
 
-static class AssemblyLine
+public static class LineUp
 {
-    public static double SuccessRate(int speed)
+    public static string Format(string name, int number)
     {
-        if (speed == 0) return 0.0;
-        if (speed > 0 && speed < 5) return 1.0;
-        if (speed > 4 && speed < 9) return 0.9;
-        if (speed == 9) return 0.8;
-        return 0.77;
-    }
-
-    public static double ProductionRatePerHour(int speed)
-    {
-        return 221 * SuccessRate(speed) * speed;
-    }
-
-    public static int WorkingItemsPerMinute(int speed)
-    {
-        return (int)ProductionRatePerHour(speed) / 60;
+        var rem = number % 10;
+        var suffix = "th";
+        if (rem == 1 && number % 100 != 11) {
+            suffix = "st";
+        }
+        if (rem == 2 && number % 100 != 12) {
+            suffix = "nd";
+        }
+        if (rem == 3 && number % 100 != 13)
+        {
+            suffix = "rd";
+        }
+        return $"{name}, you are the {number}{suffix} customer we serve today. Thank you!";
     }
 }
-
 
 namespace ConsoleApp
 {
