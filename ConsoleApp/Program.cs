@@ -1,20 +1,27 @@
 ﻿using System;
 
-public static class PhoneNumber
+static class AssemblyLine
 {
-    public static (bool IsNewYork, bool IsFake, string LocalNumber) Analyze(string phoneNumber)
+    public static double SuccessRate(int speed)
     {
-        var numbers = phoneNumber.Split('-');
-        var isNewYork = numbers[0] == "212";
-        var isFake = numbers[1] == "555";
-        return (isNewYork, isFake, numbers[2]);
+        if (speed == 0) return 0.0;
+        if (speed > 0 && speed < 5) return 1.0;
+        if (speed > 4 && speed < 9) return 0.9;
+        if (speed == 9) return 0.8;
+        return 0.77;
     }
 
-    public static bool IsFake((bool IsNewYork, bool IsFake, string LocalNumber) phoneNumberInfo)
+    public static double ProductionRatePerHour(int speed)
     {
-        return phoneNumberInfo.IsFake;
+        return 221 * SuccessRate(speed) * speed;
+    }
+
+    public static int WorkingItemsPerMinute(int speed)
+    {
+        return (int)ProductionRatePerHour(speed) / 60;
     }
 }
+
 
 namespace ConsoleApp
 {
