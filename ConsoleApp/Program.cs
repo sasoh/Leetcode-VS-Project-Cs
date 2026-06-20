@@ -2,11 +2,39 @@
 using System.Collections.Generic;
 using System.Linq;
 
-static class Badge
+public class Anagram
 {
-    public static string Print(int? id, string name, string? department)
+    private Dictionary<char, int> _baseWordFrequency = new();
+    private string _baseWord;
+
+    public Anagram(string baseWord)
     {
-        return $"{(id != null ? $"[{id}] - ": "")}{name} - {(department != null ? department.ToUpper() : "OWNER")}";
+        _baseWord = baseWord;
+        _baseWordFrequency = FrequencyForWord(_baseWord);
+    }
+
+    public string[] FindAnagrams(string[] potentialMatches)
+    {
+        var r = new List<string>();
+        foreach (var w in potentialMatches)
+        {
+            if (w.ToLower() == _baseWord.ToLower()) continue;
+            if (FrequencyForWord(w).Except(_baseWordFrequency).Any()) continue;
+            r.Add(w);
+        }
+        return r.ToArray();
+    }
+
+    private Dictionary<char, int> FrequencyForWord(string word)
+    {
+        var r = new Dictionary<char, int>();
+        foreach (var c in word)
+        {
+            var cl = char.ToLower(c);
+            if (!r.ContainsKey(cl)) r.Add(cl, 0);
+            r[cl] += 1;
+        }
+        return r;
     }
 }
 
@@ -14,8 +42,12 @@ namespace ConsoleApp
 {
     public class Program
     {
-        private static void T1() { 
-            
+        private static void T1()
+        {
+            var a = new Anagram("solemn");
+            var app = new[] { "melons", "lemons" };
+            var an = a.FindAnagrams(app);
+            Console.WriteLine(string.Join(", ", an));
         }
 
         private static void RunTests()
