@@ -1,53 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
-public class Anagram
-{
-    private Dictionary<char, int> _baseWordFrequency = new();
-    private string _baseWord;
-
-    public Anagram(string baseWord)
-    {
-        _baseWord = baseWord;
-        _baseWordFrequency = FrequencyForWord(_baseWord);
-    }
-
-    public string[] FindAnagrams(string[] potentialMatches)
-    {
-        var r = new List<string>();
-        foreach (var w in potentialMatches)
-        {
-            if (w.ToLower() == _baseWord.ToLower()) continue;
-            if (FrequencyForWord(w).Except(_baseWordFrequency).Any()) continue;
-            r.Add(w);
-        }
-        return r.ToArray();
-    }
-
-    private Dictionary<char, int> FrequencyForWord(string word)
-    {
-        var r = new Dictionary<char, int>();
-        foreach (var c in word)
-        {
-            var cl = char.ToLower(c);
-            if (!r.ContainsKey(cl)) r.Add(cl, 0);
-            r[cl] += 1;
-        }
-        return r;
-    }
-}
+using System.Text;
 
 namespace ConsoleApp
 {
+    static class Appointment
+    {
+        public static DateTime Schedule(string appointmentDateDescription)
+        {
+            if (DateTime.TryParse(appointmentDateDescription, out var parsed)) {
+                return parsed;
+            }
+            return DateTime.Now;
+        }
+
+        public static bool HasPassed(DateTime appointmentDate) => (DateTime.Now - appointmentDate).TotalSeconds > 0;
+
+        public static bool IsAfternoonAppointment(DateTime appointmentDate) => appointmentDate.Hour >= 12 && appointmentDate.Hour < 18;
+
+        public static string Description(DateTime appointmentDate) => $"You have an appointment on {appointmentDate}.";
+
+        public static DateTime AnniversaryDate() => new DateTime(DateTime.Now.Year, 9, 15);
+    }
+
+
     public class Program
     {
         private static void T1()
         {
-            var a = new Anagram("solemn");
-            var app = new[] { "melons", "lemons" };
-            var an = a.FindAnagrams(app);
-            Console.WriteLine(string.Join(", ", an));
+            
         }
 
         private static void RunTests()
