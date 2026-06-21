@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Text;
-
 namespace ConsoleApp
 {
-    public static class ReverseString
+    public static class Darts
     {
-        public static string Reverse(string input)
+        public static int Score(double x, double y)
         {
-            var s = new StringBuilder();
-            for (var i = input.Length - 1; i >= 0; --i) {
-                s.Append(input[i]);
-            }
-            return s.ToString();
+            var d = Math.Sqrt(x * x + y * y);
+            if (d <= 1) return 10;
+            if (d <= 5) return 5;
+            if (d <= 10) return 1;
+            return 0;
         }
     }
 
