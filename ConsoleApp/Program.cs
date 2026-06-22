@@ -3,85 +3,44 @@ using System.Collections.Generic;
 using System.Text;
 namespace ConsoleApp
 {
-    public static class RunLengthEncoding
+    public static class Languages
     {
-        public static string Encode(string input)
+        public static List<string> NewList() => new();
+
+        public static List<string> GetExistingLanguages() => new() { "C#", "Clojure", "Elm" };
+
+        public static List<string> AddLanguage(List<string> languages, string language)
         {
-            var sb = new StringBuilder();
-            for (var i = 0; i < input.Length; ++i) {
-                var current = input[i];
-                if (i < input.Length - 1)
-                {
-                    var end = 0;
-                    for (var j = i; j < input.Length; ++j)
-                    {
-                        var next = input[j];
-                        if (current == next)
-                        {
-                            end = j;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    var d = end - i + 1;
-                    if (d > 1)
-                    {
-                        sb.Append($"{d}{current}");
-                        i = end;
-                    }
-                    else
-                    {
-                        sb.Append(current);
-                    }
-                }
-                else {
-                    sb.Append(current);
-                }
-            }
-            return sb.ToString();
+            languages.Add(language);
+            return languages;
         }
 
-        public static string Decode(string input)
+        public static int CountLanguages(List<string> languages) => languages.Count;
+
+        public static bool HasLanguage(List<string> languages, string language) => languages.Contains(language);
+
+        public static List<string> ReverseList(List<string> languages)
         {
-            var sb = new StringBuilder();
-            for (var i = 0; i < input.Length; ++i) {
-                var current = input[i];
-                if (char.IsDigit(current))
-                {
-                    var number = new List<int>();
-                    number.Add(int.Parse(current.ToString()));
-                    var letter = 0;
-                    for (var j = i + 1; j < input.Length; ++j)
-                    {
-                        var next = input[j];
-                        if (char.IsDigit(next))
-                        {
-                            number.Add(int.Parse(next.ToString()));
-                        }
-                        else
-                        {
-                            letter = j;
-                            break;
-                        }
-                    }
-                    int times = 0;
-                    for (var j = 0; j < number.Count; ++j) {
-                        var digit = number[number.Count - j - 1];
-                        times += digit * Convert.ToInt32(Math.Pow(10, j));
-                    }
-                    for (var j = 0; j < times; ++j) {
-                        sb.Append(input[letter]);
-                    }
-                    i = letter;
-                }
-                else
-                {
-                    sb.Append(current);
+            languages.Reverse();
+            return languages;
+        }
+
+        public static bool IsExciting(List<string> languages) => languages.Count > 0 && (languages[0] == "C#" || (languages.Count > 2 && languages.Count < 4 && languages[1] == "C#"));
+
+        public static List<string> RemoveLanguage(List<string> languages, string language)
+        {
+            languages.Remove(language);
+            return languages;
+        }
+
+        public static bool IsUnique(List<string> languages)
+        {
+            for (var i = 0; i < languages.Count; ++i) {
+                for (var j = i + 1; j < languages.Count; ++j) { 
+                    if (languages[i] == languages[j]) return false;
                 }
             }
-            return sb.ToString();
+            return true;
         }
     }
 
@@ -90,13 +49,6 @@ namespace ConsoleApp
 
         private static void T1()
         {
-            //const string i = "AABCCCDEEEE";
-            //var e = RunLengthEncoding.Encode(i);
-            //var d = RunLengthEncoding.Encode(e);
-            //Console.WriteLine($"{i} -> {e} -> {d}");
-            //Console.WriteLine($"{RunLengthEncoding.Encode("XYZ")}");
-            //Console.WriteLine($"{RunLengthEncoding.Encode("WWWWWWWWWWWWBWWWWWWWWWWWWBBBWWWWWWWWWWWWWWWWWWWWWWWWB")}");
-            Console.WriteLine($"{RunLengthEncoding.Decode("2AB3C4MP")}");
         }
 
         private static void RunTests()
