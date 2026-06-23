@@ -2,15 +2,28 @@
 using System.Collections.Generic;
 namespace ConsoleApp
 {
-    public static class AccumulateExtensions
+    public static class Triangle
     {
-        public static IEnumerable<U> Accumulate<T, U>(this IEnumerable<T> collection, Func<T, U> func)
+        private static bool IsValidTriangle(double side1, double side2, double side3) { 
+            return (side1 + side2 > side3) && (side2 + side3 > side1) && (side3 + side1 > side2);
+        }
+
+        public static bool IsScalene(double side1, double side2, double side3)
         {
-            var i = collection.GetEnumerator();
-            while (i.MoveNext())
-            {
-               yield return func(i.Current);
-            }
+            if (!IsValidTriangle(side1, side2, side3)) return false;
+            return side1 != side2 && side2 != side3 && side3 != side1;
+        }
+
+        public static bool IsIsosceles(double side1, double side2, double side3)
+        {
+            if (!IsValidTriangle(side1, side2, side3)) return false;
+            return side1 == side2 || side2 == side3 || side3 == side1;
+        }
+
+        public static bool IsEquilateral(double side1, double side2, double side3)
+        {
+            if (!IsValidTriangle(side1, side2, side3)) return false;
+            return side1 == side2 && side2 == side3;
         }
     }
 
