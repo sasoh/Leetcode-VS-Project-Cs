@@ -1,39 +1,71 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Text;
 namespace ConsoleApp
 {
-    public static class Triangle
+    public class SpiralMatrix
     {
-        private static bool IsValidTriangle(double side1, double side2, double side3) { 
-            return (side1 + side2 > side3) && (side2 + side3 > side1) && (side3 + side1 > side2);
+        public static int[,] GetMatrix(int size)
+        {
+            var r = new int[size, size];
+
+            var top = 0;
+            var bottom = size - 1;
+            var left = 0;
+            var right = size - 1;
+            var num = 1;
+            while (top <= bottom && left <= right)
+            {
+                for (var i = left; i <= right; ++i)
+                {
+                    r[top, i] = num++;
+                }
+                top++;
+
+                for (var i = top; i <= bottom; ++i)
+                {
+                    r[i, right] = num++;
+                }
+                right--;
+
+                for (var i = right; i >= left; --i) {
+                    r[bottom, i] = num++;
+                }
+                bottom--;
+
+                for (var i = bottom; i >= top; --i) {
+                    r[i, left] = num++;
+                }
+                left++;
+            }
+
+            return r;
         }
 
-        public static bool IsScalene(double side1, double side2, double side3)
+        public static string PrintMatrix(int[,] m)
         {
-            if (!IsValidTriangle(side1, side2, side3)) return false;
-            return side1 != side2 && side2 != side3 && side3 != side1;
-        }
-
-        public static bool IsIsosceles(double side1, double side2, double side3)
-        {
-            if (!IsValidTriangle(side1, side2, side3)) return false;
-            return side1 == side2 || side2 == side3 || side3 == side1;
-        }
-
-        public static bool IsEquilateral(double side1, double side2, double side3)
-        {
-            if (!IsValidTriangle(side1, side2, side3)) return false;
-            return side1 == side2 && side2 == side3;
+            var sb = new StringBuilder();
+            int length = m.GetLength(0);
+            for (var i = 0; i < length; ++i) {
+                for (var j = 0; j < length; ++j) {
+                    var num = m[i, j];
+                    sb.AppendFormat("{0,2}", num);
+                    if (j < length - 1) { 
+                        sb.Append(", ");
+                    }
+                }
+                sb.Append('\n');
+            }
+            return sb.ToString();
         }
     }
+
 
     public class Program
     {
         private static void T1()
         {
-
-            var p = new List<int> { 1, 2, 3, 4 };
-            Console.WriteLine($"{string.Join(", ", p.Accumulate(i => i * i))}");
+            var i = SpiralMatrix.GetMatrix(4);
+            Console.WriteLine(SpiralMatrix.PrintMatrix(i));
         }
 
         private static void RunTests()
