@@ -1,27 +1,49 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Text;
 namespace ConsoleApp
 {
-    public static class ResistorColor
+    public static class ProteinTranslation
     {
-        public static int ColorCode(string color) => color switch
-        {
-            "black" => 0,
-            "brown" => 10,
-            "red" => 2,
-            "orange" => 3,
-            "yellow" => 4,
-            "green" => 5,
-            "blue" => 6,
-            "violet" => 7,
-            "grey" => 8,
-            "white" => 9,
-            _ => throw new NotImplementedException()
+        private static bool IsStop(in string str) => str is "UAA" or "UAG" or "UGA";
+        private static Dictionary<HashSet<string>, string> codonsToProteins =
+        new() {
+            { new (){ "AUG" }, "Methionine" },
+            { new (){ "UUU", "UUC" }, "Phenylalanine" },
+            { new (){ "UUA", "UUG" }, "Leucine"  },
+            { new (){ "UCU", "UCC", "UCA", "UCG" }, "Serine" },
+            { new (){ "UAU", "UAC" }, "Tyrosine" },
+            { new (){ "UGU", "UGC" }, "Cysteine" },
+            { new (){ "UGG" }, "Tryptophan" },
+
         };
 
-        public static string[] Colors() => new[] { "black", "brown", "red", "orange", "yellow", "green", "blue", "violet", "grey", "white" };
-    }
+        private static string CodonToAmino(in string str)
+        {
+            foreach (var p in codonsToProteins)
+            {
+                if (!p.Key.Contains(str)) continue;
+                return p.Value;
 
+            }
+            return "";
+        }
+
+        public static string[] Proteins(string strand)
+        {
+            var r = new List<string>();
+
+            for (var i = 0; i < strand.Length; i += 3)
+            {
+                var substring = strand.Substring(i, 3);
+                if (IsStop(substring)) break;
+                r.Add(CodonToAmino(substring));
+            }
+
+            return r.ToArray();
+        }
+    }
 
     public class Program
     {
