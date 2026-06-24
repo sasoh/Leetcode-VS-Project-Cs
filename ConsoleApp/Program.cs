@@ -2,18 +2,16 @@
 using System.Text;
 namespace ConsoleApp
 {
-    public class SpaceAge
+    public static class DifferenceOfSquares
     {
-        private int _age;
-        public SpaceAge(int seconds) => _age = seconds;
-        public double OnEarth() => _age / 31557600.0;
-        public double OnMercury() => OnEarth() / 0.2408467;
-        public double OnVenus() => OnEarth() / 0.61519726;
-        public double OnMars() => OnEarth() / 1.8808158;
-        public double OnJupiter() => OnEarth() / 11.862615;
-        public double OnSaturn() => OnEarth() / 29.447498;
-        public double OnUranus() => OnEarth() / 84.016846;
-        public double OnNeptune() => OnEarth() / 164.79132;
+        public static int CalculateSquareOfSum(int max)
+        {
+            int sum = max * (max + 1) / 2;
+            return sum * sum;
+        }
+
+        public static int CalculateSumOfSquares(int max) => max * (max + 1) * (2 * max + 1) / 6;
+        public static int CalculateDifferenceOfSquares(int max) => CalculateSquareOfSum(max) - CalculateSumOfSquares(max);
     }
 
     public class Program
