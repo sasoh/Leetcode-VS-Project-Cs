@@ -20,8 +20,6 @@ namespace ConsoleApp
     {
         private static void T1()
         {
-            var i = SpiralMatrix.GetMatrix(4);
-            Console.WriteLine(SpiralMatrix.PrintMatrix(i));
         }
 
         private static void RunTests()
