@@ -2,10 +2,26 @@
 using System.Text;
 namespace ConsoleApp
 {
-    public static class Gigasecond
+    public static class ResistorColor
     {
-        public static DateTime Add(DateTime moment) => moment.AddSeconds(1000000000);
+        public static int ColorCode(string color) => color switch
+        {
+            "black" => 0,
+            "brown" => 10,
+            "red" => 2,
+            "orange" => 3,
+            "yellow" => 4,
+            "green" => 5,
+            "blue" => 6,
+            "violet" => 7,
+            "grey" => 8,
+            "white" => 9,
+            _ => throw new NotImplementedException()
+        };
+
+        public static string[] Colors() => new[] { "black", "brown", "red", "orange", "yellow", "green", "blue", "violet", "grey", "white" };
     }
+
 
     public class Program
     {
