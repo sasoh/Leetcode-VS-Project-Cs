@@ -2,16 +2,9 @@
 using System.Text;
 namespace ConsoleApp
 {
-    public static class DifferenceOfSquares
+    public static class Gigasecond
     {
-        public static int CalculateSquareOfSum(int max)
-        {
-            int sum = max * (max + 1) / 2;
-            return sum * sum;
-        }
-
-        public static int CalculateSumOfSquares(int max) => max * (max + 1) * (2 * max + 1) / 6;
-        public static int CalculateDifferenceOfSquares(int max) => CalculateSquareOfSum(max) - CalculateSumOfSquares(max);
+        public static DateTime Add(DateTime moment) => moment.AddSeconds(1000000000);
     }
 
     public class Program
