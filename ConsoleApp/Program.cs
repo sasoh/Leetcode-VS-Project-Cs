@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Text;
+
 namespace ConsoleApp
 {
     public static class ProteinTranslation
     {
         private static bool IsStop(in string str) => str is "UAA" or "UAG" or "UGA";
-        private static Dictionary<HashSet<string>, string> codonsToProteins =
-        new() {
+
+        private static readonly Dictionary<HashSet<string>, string> codonsToProteins = new() {
             { new (){ "AUG" }, "Methionine" },
             { new (){ "UUU", "UUC" }, "Phenylalanine" },
-            { new (){ "UUA", "UUG" }, "Leucine"  },
+            { new (){ "UUA", "UUG" }, "Leucine" },
             { new (){ "UCU", "UCC", "UCA", "UCG" }, "Serine" },
             { new (){ "UAU", "UAC" }, "Tyrosine" },
             { new (){ "UGU", "UGC" }, "Cysteine" },
-            { new (){ "UGG" }, "Tryptophan" },
-
+            { new (){ "UGG" }, "Tryptophan" }
         };
 
         private static string CodonToAmino(in string str)
