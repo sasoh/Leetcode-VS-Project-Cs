@@ -1,51 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ConsoleApp
 {
-    public static class Identifier
+    public static class DialingCodes
     {
-        public static string Clean(string identifier)
+        public static Dictionary<int, string> GetEmptyDictionary() => new();
+
+        public static Dictionary<int, string> GetExistingDictionary() => new() { { 1, "United States of America" }, { 55, "Brazil" }, { 91, "India" } };
+
+        public static Dictionary<int, string> AddCountryToEmptyDictionary(int countryCode, string countryName) => new() { { countryCode, countryName } };
+
+        public static Dictionary<int, string> AddCountryToExistingDictionary(
+            Dictionary<int, string> existingDictionary, int countryCode, string countryName)
         {
-            var sb = new StringBuilder();
-            for (var i = 0; i < identifier.Length; i++)
+            existingDictionary.Add(countryCode, countryName);
+            return existingDictionary;
+        }
+
+        public static string GetCountryNameFromDictionary(
+            Dictionary<int, string> existingDictionary, int countryCode) => existingDictionary.TryGetValue(countryCode, out var countryName) ? countryName : string.Empty;
+
+        public static bool CheckCodeExists(Dictionary<int, string> existingDictionary, int countryCode) => existingDictionary.ContainsKey(countryCode);
+
+        public static Dictionary<int, string> UpdateDictionary(
+            Dictionary<int, string> existingDictionary, int countryCode, string countryName)
+        {
+            if (existingDictionary.Remove(countryCode))
             {
-                var c = identifier[i];
-                if (char.IsWhiteSpace(c))
-                {
-                    sb.Append('_');
-                }
-                else if (char.IsControl(c))
-                {
-                    sb.Append("CTRL");
-                }
-                else if (c == '-')
-                {
-                    if (i < identifier.Length - 1)
-                    {
-                        var nextC = identifier[i + 1];
-                        sb.Append(char.ToUpper(nextC));
-                        i++;
-                    }
-                }
-                else if (!char.IsLetter(c) || c >= 'α' && c <= 'ω')
-                {
-                    continue;
-                }
-                else {
-                    sb.Append(c);
+                existingDictionary.Add(countryCode, countryName);
+            }
+            return existingDictionary;
+        }
+
+        public static Dictionary<int, string> RemoveCountryFromDictionary(
+            Dictionary<int, string> existingDictionary, int countryCode)
+        {
+            existingDictionary.Remove(countryCode);
+            return existingDictionary;
+        }
+
+        public static string FindLongestCountryName(Dictionary<int, string> existingDictionary)
+        {
+            var longest = string.Empty;
+            foreach (var country in existingDictionary.Values) {
+                if (country.Length > longest.Length) {
+                    longest = country;
                 }
             }
-            return sb.ToString();
+            return longest;
         }
     }
-
 
     public class Program
     {
         private static void T1()
         {
+            var countryCodes = DialingCodes.UpdateDictionary(
+                DialingCodes.GetExistingDictionary(), 1, "les États-Unis");
+            Console.WriteLine($"brbr");
         }
 
         private static void RunTests()
