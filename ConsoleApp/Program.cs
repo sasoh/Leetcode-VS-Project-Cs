@@ -1,90 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace ConsoleApp
 {
-    public static class PlayAnalyzer
+    public enum LogLevel
     {
-        public static string AnalyzeOnField(int shirtNum)
+        Unknown = 0,
+        Trace = 1,
+        Debug = 2,
+        Info = 4,
+        Warning = 5,
+        Error = 6,
+        Fatal = 42
+    };
+
+    static class LogLine
+    {
+
+        public static LogLevel ParseLogLevel(string logLine)
         {
-            switch (shirtNum)
+            var level = logLine.Substring(1, 3);
+            return level switch
             {
-                case 1:
-                {
-                    return "goalie";
-                }
-                case 2:
-                {
-                    return "left back";
-                }
-                case 3:
-                case 4:
-                {
-                    return "center back";
-                }
-                case 5:
-                {
-                    return "right back";
-                }
-                case 6:
-                case 7:
-                case 8:
-                {
-                    return "midfielder";
-                }
-                case 9:
-                {
-                    return "left wing";
-                }
-                case 10:
-                {
-                    return "striker";
-                }
-                case 11:
-                {
-                    return "right wing";
-                }
-                default:
-                {
-                    return "UNKNOWN";
-                }
-            }
+                "TRC" => LogLevel.Trace,
+                "DBG" => LogLevel.Debug,
+                "INF" => LogLevel.Info,
+                "WRN" => LogLevel.Warning,
+                "ERR" => LogLevel.Error,
+                "FTL" => LogLevel.Fatal,
+                _ => LogLevel.Unknown
+            };
         }
 
-
-        public static string AnalyzeOffField(object report)
-        {
-            switch (report)
-            {
-                case int n:
-                {
-                    return $"There are {n} supporters at the match.";
-                }
-                case string s:
-                {
-                    return s;
-                }
-                case Foul f:
-                {
-                    return $"The referee deemed a foul.";
-                }
-                case Injury f:
-                {
-                    return $"Oh no! {f.GetDescription()} Medics are on the field.";
-                }
-                case Incident i:
-                {
-                    return "An incident happened.";
-                }
-                case Manager m:
-                {
-                    return m.Club != null ? $"{m.Name} ({m.Club})" : m.Name;
-                }
-            }
-            return "";
-        }
+        public static string OutputForShortLog(LogLevel logLevel, string message) => $"{(int)logLevel}:{message}";
     }
+
 
     public class Program
     {
