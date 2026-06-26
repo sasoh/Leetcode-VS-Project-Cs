@@ -1,71 +1,97 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace ConsoleApp
 {
-    public static class DialingCodes
+    public static class PlayAnalyzer
     {
-        public static Dictionary<int, string> GetEmptyDictionary() => new();
-
-        public static Dictionary<int, string> GetExistingDictionary() => new() { { 1, "United States of America" }, { 55, "Brazil" }, { 91, "India" } };
-
-        public static Dictionary<int, string> AddCountryToEmptyDictionary(int countryCode, string countryName) => new() { { countryCode, countryName } };
-
-        public static Dictionary<int, string> AddCountryToExistingDictionary(
-            Dictionary<int, string> existingDictionary, int countryCode, string countryName)
+        public static string AnalyzeOnField(int shirtNum)
         {
-            existingDictionary.Add(countryCode, countryName);
-            return existingDictionary;
-        }
-
-        public static string GetCountryNameFromDictionary(
-            Dictionary<int, string> existingDictionary, int countryCode) => existingDictionary.TryGetValue(countryCode, out var countryName) ? countryName : string.Empty;
-
-        public static bool CheckCodeExists(Dictionary<int, string> existingDictionary, int countryCode) => existingDictionary.ContainsKey(countryCode);
-
-        public static Dictionary<int, string> UpdateDictionary(
-            Dictionary<int, string> existingDictionary, int countryCode, string countryName)
-        {
-            if (existingDictionary.Remove(countryCode))
+            switch (shirtNum)
             {
-                existingDictionary.Add(countryCode, countryName);
-            }
-            return existingDictionary;
-        }
-
-        public static Dictionary<int, string> RemoveCountryFromDictionary(
-            Dictionary<int, string> existingDictionary, int countryCode)
-        {
-            existingDictionary.Remove(countryCode);
-            return existingDictionary;
-        }
-
-        public static string FindLongestCountryName(Dictionary<int, string> existingDictionary)
-        {
-            var longest = string.Empty;
-            foreach (var country in existingDictionary.Values) {
-                if (country.Length > longest.Length) {
-                    longest = country;
+                case 1:
+                {
+                    return "goalie";
+                }
+                case 2:
+                {
+                    return "left back";
+                }
+                case 3:
+                case 4:
+                {
+                    return "center back";
+                }
+                case 5:
+                {
+                    return "right back";
+                }
+                case 6:
+                case 7:
+                case 8:
+                {
+                    return "midfielder";
+                }
+                case 9:
+                {
+                    return "left wing";
+                }
+                case 10:
+                {
+                    return "striker";
+                }
+                case 11:
+                {
+                    return "right wing";
+                }
+                default:
+                {
+                    return "UNKNOWN";
                 }
             }
-            return longest;
+        }
+
+
+        public static string AnalyzeOffField(object report)
+        {
+            switch (report)
+            {
+                case int n:
+                {
+                    return $"There are {n} supporters at the match.";
+                }
+                case string s:
+                {
+                    return s;
+                }
+                case Foul f:
+                {
+                    return $"The referee deemed a foul.";
+                }
+                case Injury f:
+                {
+                    return $"Oh no! {f.GetDescription()} Medics are on the field.";
+                }
+                case Incident i:
+                {
+                    return "An incident happened.";
+                }
+                case Manager m:
+                {
+                    return m.Club != null ? $"{m.Name} ({m.Club})" : m.Name;
+                }
+            }
+            return "";
         }
     }
 
     public class Program
     {
-        private static void T1()
-        {
-            var countryCodes = DialingCodes.UpdateDictionary(
-                DialingCodes.GetExistingDictionary(), 1, "les États-Unis");
-            Console.WriteLine($"brbr");
-        }
 
         private static void RunTests()
         {
             Console.WriteLine("Running tests");
-
-            T1();
 
             Console.WriteLine("Finished tests");
         }
