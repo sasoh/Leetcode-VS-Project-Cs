@@ -1,37 +1,30 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ConsoleApp
 {
-    public enum LogLevel
+    public class Robot
     {
-        Unknown = 0,
-        Trace = 1,
-        Debug = 2,
-        Info = 4,
-        Warning = 5,
-        Error = 6,
-        Fatal = 42
-    };
+        private string _name = GenerateName();
+        private static Random _random = new();
+        private static HashSet<string> _generated = new();
 
-    static class LogLine
-    {
+        public string Name => _name;
 
-        public static LogLevel ParseLogLevel(string logLine)
+        private static string GenerateName()
         {
-            var level = logLine.Substring(1, 3);
-            return level switch
+            bool contains = false;
+            string name = "";
+            do
             {
-                "TRC" => LogLevel.Trace,
-                "DBG" => LogLevel.Debug,
-                "INF" => LogLevel.Info,
-                "WRN" => LogLevel.Warning,
-                "ERR" => LogLevel.Error,
-                "FTL" => LogLevel.Fatal,
-                _ => LogLevel.Unknown
-            };
+                name = $"{(char)('A' + _random.Next(26))}{(char)('A' + _random.Next(26))}{_random.Next(10)}{_random.Next(10)}{_random.Next(10)}";
+                contains = _generated.Contains(name);
+            } while (contains);
+
+            return name;
         }
 
-        public static string OutputForShortLog(LogLevel logLevel, string message) => $"{(int)logLevel}:{message}";
+        public void Reset() => _name = GenerateName();
     }
 
 
