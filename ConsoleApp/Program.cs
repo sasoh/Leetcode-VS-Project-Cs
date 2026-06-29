@@ -1,31 +1,30 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace ConsoleApp
 {
-    class WeighingMachine
+    public static class Isogram
     {
-        private int _precision;
-        public int Precision { get => _precision; }
-
-        private double _weight;
-        public double Weight
+        public static bool IsIsogram(string word)
         {
-            set
+            var freq = new Dictionary<char, int>();
+            foreach (char ch in word)
             {
-                if (value < 0) throw new ArgumentOutOfRangeException();
-                _weight = value;
+                var lower = char.ToLower(ch);
+                if (!char.IsLetter(lower)) continue;
+                if (!freq.ContainsKey(lower)) freq.Add(lower, 0);
+                freq[lower]++;
             }
 
-            get => _weight;
+            foreach (int f in freq.Values) {
+                if (f > 1) return false;
+            }
+
+            return true;
         }
-
-        public double TareAdjustment { get; set; } = 5;
-
-        public string DisplayWeight => string.Format(new NumberFormatInfo() { NumberDecimalDigits = _precision }, "{0:F} kg", new decimal(_weight - TareAdjustment));
-
-        public WeighingMachine(int precision) => _precision = precision;
     }
+
 
     public class Program
     {
@@ -33,6 +32,8 @@ namespace ConsoleApp
         private static void RunTests()
         {
             Console.WriteLine("Running tests");
+
+            Isogram.IsIsogram("isogram");
 
             Console.WriteLine("Finished tests");
         }
