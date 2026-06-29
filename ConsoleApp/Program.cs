@@ -1,28 +1,30 @@
 ﻿using System;
+using System.Globalization;
 
 namespace ConsoleApp
 {
-    public static class SimpleCalculator
+    class WeighingMachine
     {
-        public static string Calculate(int operand1, int operand2, string? operation)
+        private int _precision;
+        public int Precision { get => _precision; }
+
+        private double _weight;
+        public double Weight
         {
-            if (operation == null) throw new ArgumentNullException();
-            if (string.IsNullOrEmpty(operation)) throw new ArgumentException();
-            if (operation == "+")
+            set
             {
-                return string.Format($"{operand1} + {operand2} = {operand1 + operand2}");
+                if (value < 0) throw new ArgumentOutOfRangeException();
+                _weight = value;
             }
-            else if (operation == "*")
-            {
-                return string.Format($"{operand1} * {operand2} = {operand1 * operand2}");
-            }
-            else if (operation == "/")
-            {
-                if (operand2 == 0) return "Division by zero is not allowed.";
-                return string.Format($"{operand1} / {operand2} = {operand1 / operand2}");
-            }
-            throw new ArgumentOutOfRangeException();
+
+            get => _weight;
         }
+
+        public double TareAdjustment { get; set; } = 5;
+
+        public string DisplayWeight => string.Format(new NumberFormatInfo() { NumberDecimalDigits = _precision }, "{0:F} kg", new decimal(_weight - TareAdjustment));
+
+        public WeighingMachine(int precision) => _precision = precision;
     }
 
     public class Program
