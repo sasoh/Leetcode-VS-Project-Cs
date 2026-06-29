@@ -1,32 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace ConsoleApp
 {
-    public class Robot
+    public static class SimpleCalculator
     {
-        private string _name = GenerateName();
-        private static Random _random = new();
-        private static HashSet<string> _generated = new();
-
-        public string Name => _name;
-
-        private static string GenerateName()
+        public static string Calculate(int operand1, int operand2, string? operation)
         {
-            bool contains = false;
-            string name = "";
-            do
+            if (operation == null) throw new ArgumentNullException();
+            if (string.IsNullOrEmpty(operation)) throw new ArgumentException();
+            if (operation == "+")
             {
-                name = $"{(char)('A' + _random.Next(26))}{(char)('A' + _random.Next(26))}{_random.Next(10)}{_random.Next(10)}{_random.Next(10)}";
-                contains = _generated.Contains(name);
-            } while (contains);
-
-            return name;
+                return string.Format($"{operand1} + {operand2} = {operand1 + operand2}");
+            }
+            else if (operation == "*")
+            {
+                return string.Format($"{operand1} * {operand2} = {operand1 * operand2}");
+            }
+            else if (operation == "/")
+            {
+                if (operand2 == 0) return "Division by zero is not allowed.";
+                return string.Format($"{operand1} / {operand2} = {operand1 / operand2}");
+            }
+            throw new ArgumentOutOfRangeException();
         }
-
-        public void Reset() => _name = GenerateName();
     }
-
 
     public class Program
     {
