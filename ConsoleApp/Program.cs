@@ -1,112 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ConsoleApp
 {
-    public class WeatherStation
+    public interface IRemoteControlCar {
+        void Drive();
+        int DistanceTravelled { get; }
+    }
+
+    public class ProductionRemoteControlCar: IRemoteControlCar, IComparable
     {
-        private Reading reading;
-        private List<DateTime> recordDates = new();
-        private List<decimal> temperatures = new();
+        public int DistanceTravelled { get; private set; }
+        public int NumberOfVictories { get; set; }
 
-        public void AcceptReading(Reading reading)
+        public void Drive() => DistanceTravelled += 10;
+
+        public int CompareTo(object obj)
         {
-            this.reading = reading;
-            recordDates.Add(DateTime.Now);
-            temperatures.Add(reading.Temperature);
-        }
-
-        public void ClearAll()
-        {
-            reading = new Reading();
-            recordDates.Clear();
-            temperatures.Clear();
-        }
-
-        public decimal LatestTemperature => reading.Temperature;
-
-        public decimal LatestPressure => reading.Pressure;
-
-        public decimal LatestRainfall => reading.Rainfall;
-
-        public bool HasHistory => recordDates.Count > 1;
-
-        public Outlook ShortTermOutlook
-        {
-            get
-            {
-                if (reading.Equals(new Reading()))
-                {
-                    throw new ArgumentException();
-                }
-                return (reading.Pressure, reading.Temperature) switch
-                {
-                    (< 10m, < 30m) => Outlook.Cool,
-                    (_, > 50) => Outlook.Good,
-                    _ => Outlook.Warm
+            if (obj is ProductionRemoteControlCar c) {
+                return NumberOfVictories - c.NumberOfVictories switch { 
+                    < 0 => -1,
+                    0 => 0,
+                    > 0 => 1
                 };
             }
-        }
-
-        public Outlook LongTermOutlook => reading.WindDirection switch
-        {
-            WindDirection.Southerly => Outlook.Good,
-            WindDirection.Easterly when reading.Temperature > 20 => Outlook.Good,
-            WindDirection.Easterly when reading.Temperature <= 20 => Outlook.Warm,
-            WindDirection.Northerly => Outlook.Cool,
-            WindDirection.Easterly when reading.Temperature <= 20 => Outlook.Warm,
-            WindDirection.Westerly => Outlook.Rainy,
-            WindDirection.Unknown => throw new ArgumentException(),
-            _ => throw new NotImplementedException()
-        };
-
-        public State RunSelfTest() => reading.Equals(new Reading()) ? State.Bad : State.Good;
-    }
-
-    /*** Please do not modify this struct ***/
-    public struct Reading
-    {
-        public decimal Temperature { get; }
-        public decimal Pressure { get; }
-        public decimal Rainfall { get; }
-        public WindDirection WindDirection { get; }
-
-        public Reading(decimal temperature, decimal pressure,
-            decimal rainfall, WindDirection windDirection)
-        {
-            Temperature = temperature;
-            Pressure = pressure;
-            Rainfall = rainfall;
-            WindDirection = windDirection;
+            throw new NotImplementedException();
         }
     }
 
-    /*** Please do not modify this enum ***/
-    public enum State
+    public class ExperimentalRemoteControlCar: IRemoteControlCar
     {
-        Good,
-        Bad
+        public int DistanceTravelled { get; private set; }
+
+        public void Drive() => DistanceTravelled += 20;
     }
 
-    /*** Please do not modify this enum ***/
-    public enum Outlook
+    public static class TestTrack
     {
-        Cool,
-        Rainy,
-        Warm,
-        Good
+        public static void Race(IRemoteControlCar car) => car.Drive();
+
+        public static List<ProductionRemoteControlCar> GetRankedCars(ProductionRemoteControlCar prc1,
+            ProductionRemoteControlCar prc2) => prc1.CompareTo(prc2) switch
+            {
+                -1 => new List<ProductionRemoteControlCar> { prc1, prc2 },
+                _ => new List<ProductionRemoteControlCar> { prc2, prc1 }
+            };
     }
 
-    /*** Please do not modify this enum ***/
-    public enum WindDirection
-    {
-        Unknown, // default
-        Northerly,
-        Easterly,
-        Southerly,
-        Westerly
-    }
 
     public class Program
     {
