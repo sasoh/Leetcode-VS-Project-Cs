@@ -1,55 +1,112 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace ConsoleApp
 {
-    public class SecurityPassMaker
+    public class WeatherStation
     {
-        public string GetDisplayName(TeamSupport support)
+        private Reading reading;
+        private List<DateTime> recordDates = new();
+        private List<decimal> temperatures = new();
+
+        public void AcceptReading(Reading reading)
         {
-            var sb = new StringBuilder();
-            sb.Append("Too Important for a Security Pass");
-            if (support is Staff)
+            this.reading = reading;
+            recordDates.Add(DateTime.Now);
+            temperatures.Add(reading.Temperature);
+        }
+
+        public void ClearAll()
+        {
+            reading = new Reading();
+            recordDates.Clear();
+            temperatures.Clear();
+        }
+
+        public decimal LatestTemperature => reading.Temperature;
+
+        public decimal LatestPressure => reading.Pressure;
+
+        public decimal LatestRainfall => reading.Rainfall;
+
+        public bool HasHistory => recordDates.Count > 1;
+
+        public Outlook ShortTermOutlook
+        {
+            get
             {
-                sb.Clear();
-                sb.Append(support.Title);
-
-                if (support is Security)
+                if (reading.Equals(new Reading()))
                 {
-                    if (support is not (SecurityJunior or SecurityIntern or PoliceLiaison))
-                    {
-                        sb.Append(" Priority Personnel");
-                    }
+                    throw new ArgumentException();
                 }
+                return (reading.Pressure, reading.Temperature) switch
+                {
+                    (< 10m, < 30m) => Outlook.Cool,
+                    (_, > 50) => Outlook.Good,
+                    _ => Outlook.Warm
+                };
             }
+        }
 
-            return sb.ToString();
+        public Outlook LongTermOutlook => reading.WindDirection switch
+        {
+            WindDirection.Southerly => Outlook.Good,
+            WindDirection.Easterly when reading.Temperature > 20 => Outlook.Good,
+            WindDirection.Easterly when reading.Temperature <= 20 => Outlook.Warm,
+            WindDirection.Northerly => Outlook.Cool,
+            WindDirection.Easterly when reading.Temperature <= 20 => Outlook.Warm,
+            WindDirection.Westerly => Outlook.Rainy,
+            WindDirection.Unknown => throw new ArgumentException(),
+            _ => throw new NotImplementedException()
+        };
+
+        public State RunSelfTest() => reading.Equals(new Reading()) ? State.Bad : State.Good;
+    }
+
+    /*** Please do not modify this struct ***/
+    public struct Reading
+    {
+        public decimal Temperature { get; }
+        public decimal Pressure { get; }
+        public decimal Rainfall { get; }
+        public WindDirection WindDirection { get; }
+
+        public Reading(decimal temperature, decimal pressure,
+            decimal rainfall, WindDirection windDirection)
+        {
+            Temperature = temperature;
+            Pressure = pressure;
+            Rainfall = rainfall;
+            WindDirection = windDirection;
         }
     }
 
-    /**** Please do not alter the code below ****/
+    /*** Please do not modify this enum ***/
+    public enum State
+    {
+        Good,
+        Bad
+    }
 
-    public interface TeamSupport { string Title { get; } }
+    /*** Please do not modify this enum ***/
+    public enum Outlook
+    {
+        Cool,
+        Rainy,
+        Warm,
+        Good
+    }
 
-    public abstract class Staff: TeamSupport { public abstract string Title { get; } }
-
-    public class Manager: TeamSupport { public string Title { get; } = "The Manager"; }
-
-    public class Chairman: TeamSupport { public string Title { get; } = "The Chairman"; }
-
-    public class Physio: Staff { public override string Title { get; } = "The Physio"; }
-
-    public class OffensiveCoach: Staff { public override string Title { get; } = "Offensive Coach"; }
-
-    public class GoalKeepingCoach: Staff { public override string Title { get; } = "Goal Keeping Coach"; }
-
-    public class Security: Staff { public override string Title { get; } = "Security Team Member"; }
-
-    public class SecurityJunior: Security { public override string Title { get; } = "Security Junior"; }
-
-    public class SecurityIntern: Security { public override string Title { get; } = "Security Intern"; }
-
-    public class PoliceLiaison: Security { public override string Title { get; } = "Police Liaison Officer"; }
+    /*** Please do not modify this enum ***/
+    public enum WindDirection
+    {
+        Unknown, // default
+        Northerly,
+        Easterly,
+        Southerly,
+        Westerly
+    }
 
     public class Program
     {
