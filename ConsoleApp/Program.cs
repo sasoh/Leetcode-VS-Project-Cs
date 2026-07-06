@@ -3,35 +3,22 @@ using System.Collections.Generic;
 
 namespace ConsoleApp
 {
-    public class Matrix
+    public static class Pangram
     {
-        private readonly List<List<int>> _matrix = new();
-
-        public Matrix(string input)
+        public static bool IsPangram(string input)
         {
-            var rows = input.Split('\n');
-            for (var i = 0; i < rows.Length; ++i) {
-                _matrix.Add(new List<int>());
-                var r = rows[i];
-                var elements = r.Split(' ');
-                foreach (var e in elements)
-                {
-                    _matrix[i].Add(int.Parse(e));
-                }
+            var freq = new HashSet<char>();
+            foreach (char c in input)
+            {
+                if (!char.IsLetter(c)) continue;
+                var lowercased = char.ToLower(c);
+                freq.Add(lowercased);
             }
-        }
 
-        public int[] Row(int row) => _matrix[row - 1].ToArray();
-
-        public int[] Column(int col)
-        {
-            var c = new List<int>();
-            for (var i = 0; i < _matrix.Count; ++i) {
-                c.Add(_matrix[i][col - 1]);
-            }
-            return c.ToArray();
+            return freq.Count == 26;
         }
     }
+
 
     public class Program
     {
@@ -39,8 +26,6 @@ namespace ConsoleApp
         private static void RunTests()
         {
             Console.WriteLine("Running tests");
-
-            var sut = new Matrix("1 2\n3 4");
 
             Console.WriteLine("Finished tests");
         }
