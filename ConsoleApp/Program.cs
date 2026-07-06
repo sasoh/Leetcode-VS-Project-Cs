@@ -1,52 +1,51 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Runtime.InteropServices.ComTypes;
+using System.Text;
 
 namespace ConsoleApp
 {
-    public interface IRemoteControlCar {
-        void Drive();
-        int DistanceTravelled { get; }
-    }
-
-    public class ProductionRemoteControlCar: IRemoteControlCar, IComparable
+    public class SimpleCipher
     {
-        public int DistanceTravelled { get; private set; }
-        public int NumberOfVictories { get; set; }
-
-        public void Drive() => DistanceTravelled += 10;
-
-        public int CompareTo(object obj)
+        public SimpleCipher()
         {
-            if (obj is ProductionRemoteControlCar c) {
-                return NumberOfVictories - c.NumberOfVictories switch { 
-                    < 0 => -1,
-                    0 => 0,
-                    > 0 => 1
-                };
+            var r = new Random();
+            var sb = new StringBuilder();
+            for (int i = 0, lim = r.Next(100, 120); i < lim; ++i)
+            {
+                sb.Append((char)('a' + r.Next(0, 26)));
             }
-            throw new NotImplementedException();
+            Key = sb.ToString();
+        }
+
+        public SimpleCipher(string key) => Key = key;
+
+        public string Key { get; private set; }
+
+        public string Encode(string plaintext) => Process(plaintext, (c, i) => (char)(c + i));
+
+        public string Decode(string ciphertext) => Process(ciphertext, (c, i) => (char)(c - i));
+
+        private string Process(string input, Func<char, int, char> operation)
+        {
+            var sb = new StringBuilder();
+            for (var i = 0; i < input.Length; ++i)
+            {
+                var keyIndex = i % Key.Length;
+                var keyOffset = (Key[keyIndex] - 'a');
+                var newChar = operation(input[i], keyOffset);
+                const char diff = (char)('z' - 'a' + 1);
+                if (newChar < 'a') {
+                    newChar += diff;
+                }
+                else  if (newChar > 'z') {
+                    newChar -= diff;
+                }                
+
+                sb.Append(newChar);
+            }
+            return sb.ToString();
         }
     }
-
-    public class ExperimentalRemoteControlCar: IRemoteControlCar
-    {
-        public int DistanceTravelled { get; private set; }
-
-        public void Drive() => DistanceTravelled += 20;
-    }
-
-    public static class TestTrack
-    {
-        public static void Race(IRemoteControlCar car) => car.Drive();
-
-        public static List<ProductionRemoteControlCar> GetRankedCars(ProductionRemoteControlCar prc1,
-            ProductionRemoteControlCar prc2) => prc1.CompareTo(prc2) switch
-            {
-                -1 => new List<ProductionRemoteControlCar> { prc1, prc2 },
-                _ => new List<ProductionRemoteControlCar> { prc2, prc1 }
-            };
-    }
-
 
     public class Program
     {
@@ -54,6 +53,10 @@ namespace ConsoleApp
         private static void RunTests()
         {
             Console.WriteLine("Running tests");
+
+            var sut = new SimpleCipher("iamapandabear");
+            var a = "qayaeaagaciai";
+            var b = sut.Encode("iamapandabear");
 
             Console.WriteLine("Finished tests");
         }
