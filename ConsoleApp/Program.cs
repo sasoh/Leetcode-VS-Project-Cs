@@ -1,52 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace ConsoleApp
 {
-    public class FacialFeatures
+    static class GameMaster
     {
-        public string EyeColor { get; }
-        public decimal PhiltrumWidth { get; }
+        public static string Describe(Character character) => $"You're a level {character.Level} {character.Class} with {character.HitPoints} hit points.";
 
-        public FacialFeatures(string eyeColor, decimal philtrumWidth)
-        {
-            EyeColor = eyeColor;
-            PhiltrumWidth = philtrumWidth;
-        }
+        public static string Describe(Destination destination) => $"You've arrived at {destination.Name}, which has {destination.Inhabitants} inhabitants.";
 
-        public override bool Equals(object o) => o != null && o is FacialFeatures f && EyeColor == f.EyeColor && PhiltrumWidth == f.PhiltrumWidth;
+        public static string Describe(TravelMethod travelMethod) => travelMethod == TravelMethod.Horseback ? $"You're traveling to your destination on horseback." : $"You're traveling to your destination by walking.";
 
-        public override int GetHashCode() => (int)((long)EyeColor.GetHashCode() * PhiltrumWidth.GetHashCode() % int.MaxValue);
-    }
-    public class Identity
-    {
-        public string Email { get; }
-        public FacialFeatures FacialFeatures { get; }
+        public static string Describe(Character character, Destination destination, TravelMethod travelMethod) => $"{Describe(character)} {Describe(travelMethod)} {Describe(destination)}";
 
-        public Identity(string email, FacialFeatures facialFeatures)
-        {
-            Email = email;
-            FacialFeatures = facialFeatures;
-        }
-
-        public override bool Equals(object o) => o != null && o is Identity i && Email == i.Email && FacialFeatures.Equals(i.FacialFeatures);
-
-        public override int GetHashCode() => (int)((long)Email.GetHashCode() * FacialFeatures.GetHashCode() % int.MaxValue);
+        public static string Describe(Character character, Destination destination) => $"{Describe(character)} {Describe(TravelMethod.Walking)} {Describe(destination)}";
     }
 
-    public class Authenticator
+    class Character
     {
-        private readonly HashSet<Identity> _registered = new();
+        public string Class { get; set; }
+        public int Level { get; set; }
+        public int HitPoints { get; set; }
+    }
 
-        public static bool AreSameFace(FacialFeatures faceA, FacialFeatures faceB) => faceA.Equals(faceB);
+    class Destination
+    {
+        public string Name { get; set; }
+        public int Inhabitants { get; set; }
+    }
 
-        public bool IsAdmin(Identity identity) => identity.Equals(new Identity("admin@exerc.ism", new FacialFeatures("green", 0.9m)));
-
-        public bool Register(Identity identity) => _registered.Add(identity);
-
-        public bool IsRegistered(Identity identity) => _registered.Contains(identity);
-
-        public static bool AreSameObject(Identity identityA, Identity identityB) => identityA == identityB;
+    enum TravelMethod
+    {
+        Walking,
+        Horseback
     }
 
     public class Program
