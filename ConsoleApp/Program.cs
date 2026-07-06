@@ -15,7 +15,7 @@ namespace ConsoleApp
                 freq.Add(lowercased);
             }
 
-            return freq.Count == 26;
+            return freq.Count == ('z' - 'a' + 1);
         }
     }
 
