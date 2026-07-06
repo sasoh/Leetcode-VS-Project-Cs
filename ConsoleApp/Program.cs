@@ -1,49 +1,35 @@
 ﻿using System;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
+using System.Collections.Generic;
 
 namespace ConsoleApp
 {
-    public class SimpleCipher
+    public class Matrix
     {
-        public SimpleCipher()
+        private readonly List<List<int>> _matrix = new();
+
+        public Matrix(string input)
         {
-            var r = new Random();
-            var sb = new StringBuilder();
-            for (int i = 0, lim = r.Next(100, 120); i < lim; ++i)
-            {
-                sb.Append((char)('a' + r.Next(0, 26)));
+            var rows = input.Split('\n');
+            for (var i = 0; i < rows.Length; ++i) {
+                _matrix.Add(new List<int>());
+                var r = rows[i];
+                var elements = r.Split(' ');
+                foreach (var e in elements)
+                {
+                    _matrix[i].Add(int.Parse(e));
+                }
             }
-            Key = sb.ToString();
         }
 
-        public SimpleCipher(string key) => Key = key;
+        public int[] Row(int row) => _matrix[row - 1].ToArray();
 
-        public string Key { get; private set; }
-
-        public string Encode(string plaintext) => Process(plaintext, (c, i) => (char)(c + i));
-
-        public string Decode(string ciphertext) => Process(ciphertext, (c, i) => (char)(c - i));
-
-        private string Process(string input, Func<char, int, char> operation)
+        public int[] Column(int col)
         {
-            var sb = new StringBuilder();
-            for (var i = 0; i < input.Length; ++i)
-            {
-                var keyIndex = i % Key.Length;
-                var keyOffset = (Key[keyIndex] - 'a');
-                var newChar = operation(input[i], keyOffset);
-                const char diff = (char)('z' - 'a' + 1);
-                if (newChar < 'a') {
-                    newChar += diff;
-                }
-                else  if (newChar > 'z') {
-                    newChar -= diff;
-                }                
-
-                sb.Append(newChar);
+            var c = new List<int>();
+            for (var i = 0; i < _matrix.Count; ++i) {
+                c.Add(_matrix[i][col - 1]);
             }
-            return sb.ToString();
+            return c.ToArray();
         }
     }
 
@@ -54,9 +40,7 @@ namespace ConsoleApp
         {
             Console.WriteLine("Running tests");
 
-            var sut = new SimpleCipher("iamapandabear");
-            var a = "qayaeaagaciai";
-            var b = sut.Encode("iamapandabear");
+            var sut = new Matrix("1 2\n3 4");
 
             Console.WriteLine("Finished tests");
         }
