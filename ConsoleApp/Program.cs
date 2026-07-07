@@ -1,52 +1,17 @@
-﻿using System;
+﻿namespace ConsoleApp;
 
-namespace ConsoleApp
+public class Program
 {
-    static class GameMaster
+
+    private static void RunTests()
     {
-        public static string Describe(Character character) => $"You're a level {character.Level} {character.Class} with {character.HitPoints} hit points.";
+        Console.WriteLine("Running tests");
 
-        public static string Describe(Destination destination) => $"You've arrived at {destination.Name}, which has {destination.Inhabitants} inhabitants.";
-
-        public static string Describe(TravelMethod travelMethod) => travelMethod == TravelMethod.Horseback ? $"You're traveling to your destination on horseback." : $"You're traveling to your destination by walking.";
-
-        public static string Describe(Character character, Destination destination, TravelMethod travelMethod) => $"{Describe(character)} {Describe(travelMethod)} {Describe(destination)}";
-
-        public static string Describe(Character character, Destination destination) => $"{Describe(character)} {Describe(TravelMethod.Walking)} {Describe(destination)}";
+        Console.WriteLine("Finished tests");
     }
 
-    class Character
+    public static void Main(string[] args)
     {
-        public string Class { get; set; }
-        public int Level { get; set; }
-        public int HitPoints { get; set; }
-    }
-
-    class Destination
-    {
-        public string Name { get; set; }
-        public int Inhabitants { get; set; }
-    }
-
-    enum TravelMethod
-    {
-        Walking,
-        Horseback
-    }
-
-    public class Program
-    {
-
-        private static void RunTests()
-        {
-            Console.WriteLine("Running tests");
-
-            Console.WriteLine("Finished tests");
-        }
-
-        public static void Main(string[] args)
-        {
-            RunTests();
-        }
+        RunTests();
     }
 }
