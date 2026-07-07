@@ -1,32 +1,61 @@
 ﻿namespace ConsoleApp;
 
-public class Authenticator
+public struct CurrencyAmount
 {
-    private static Identity _admin = new() { Email = "admin@ex.ism", FacialFeatures = new() { EyeColor = "green", PhiltrumWidth = 0.9m }, NameAndAddress = ["Chanakya", "Mumbai", "India"] };
+    private decimal amount;
+    private string currency;
 
-    public Identity Admin { get => _admin; }
+    public CurrencyAmount(decimal amount, string currency)
+    {
+        this.amount = amount;
+        this.currency = currency;
+    }
 
-    private static IDictionary<string, Identity> _developers = new Dictionary<string, Identity> {
-        { "Bertrand", new() { Email = "bert@ex.ism", FacialFeatures = new() { EyeColor = "blue", PhiltrumWidth = 0.8m }, NameAndAddress = ["Bertrand", "Paris", "France"] } },
-        { "Anders", new() { Email = "anders@ex.ism", FacialFeatures = new() { EyeColor = "brown", PhiltrumWidth = 0.85m }, NameAndAddress = ["Anders", "Redmond", "USA"] } }
-    };
+    public static bool operator ==(CurrencyAmount lhs, CurrencyAmount rhs)
+    {
+        if (lhs.currency != rhs.currency) throw new ArgumentException();
+        return lhs.amount == rhs.amount;
+    }
 
-    public IDictionary<string, Identity> Developers { get => _developers; }
-}
+    public static bool operator !=(CurrencyAmount lhs, CurrencyAmount rhs) => !(lhs == rhs);
 
-//**** please do not modify the FacialFeatures class ****
-public class FacialFeatures
-{
-    public required string EyeColor { get; set; }
-    public required decimal PhiltrumWidth { get; set; }
-}
+    public static bool operator <(CurrencyAmount lhs, CurrencyAmount rhs)
+    {
+        if (lhs.currency != rhs.currency) throw new ArgumentException();
+        return lhs.amount < rhs.amount;
+    }
 
-//**** please do not modify the Identity class ****
-public class Identity
-{
-    public required string Email { get; set; }
-    public required FacialFeatures FacialFeatures { get; set; }
-    public required IList<string> NameAndAddress { get; set; }
+    public static bool operator >(CurrencyAmount lhs, CurrencyAmount rhs)
+    {
+        if (lhs.currency != rhs.currency) throw new ArgumentException();
+        return lhs.amount > rhs.amount;
+    }
+
+    public static CurrencyAmount operator +(CurrencyAmount lhs, CurrencyAmount rhs)
+    {
+        if (lhs.currency != rhs.currency) throw new ArgumentException();
+        return new() { currency = lhs.currency, amount = lhs.amount + rhs.amount };
+    }
+
+    public static CurrencyAmount operator -(CurrencyAmount lhs, CurrencyAmount rhs)
+    {
+        if (lhs.currency != rhs.currency) throw new ArgumentException();
+        return new() { currency = lhs.currency, amount = lhs.amount - rhs.amount };
+    }
+
+    public static CurrencyAmount operator *(CurrencyAmount lhs, decimal rhs) => new() { currency = lhs.currency, amount = lhs.amount * rhs };
+
+    public static CurrencyAmount operator /(CurrencyAmount lhs, decimal rhs) => new() { currency = lhs.currency, amount = lhs.amount / rhs };
+
+    public static CurrencyAmount operator *(decimal lhs, CurrencyAmount rhs) => rhs * lhs;
+
+    public static CurrencyAmount operator /(decimal lhs, CurrencyAmount rhs) => new() { currency = rhs.currency, amount = lhs / rhs.amount };
+
+    public static explicit operator double(CurrencyAmount lhs) => (double)lhs.amount;
+
+    //public static explicit operator decimal(CurrencyAmount lhs) => lhs.amount;
+
+    public static implicit operator decimal(CurrencyAmount lhs) => lhs.amount;
 }
 
 public class Program
