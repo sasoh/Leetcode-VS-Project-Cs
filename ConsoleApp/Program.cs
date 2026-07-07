@@ -1,62 +1,74 @@
 ﻿namespace ConsoleApp;
 
-public struct CurrencyAmount
+public class RemoteControlCar
 {
-    private decimal amount;
-    private string currency;
+    private int batteryPercentage = 100;
+    private int distanceDrivenInMeters = 0;
+    private string[] sponsors = new string[0];
+    private int latestSerialNum = 0;
 
-    public CurrencyAmount(decimal amount, string currency)
+    public void Drive()
     {
-        this.amount = amount;
-        this.currency = currency;
+        if (batteryPercentage > 0)
+        {
+            batteryPercentage -= 10;
+            distanceDrivenInMeters += 2;
+        }
     }
 
-    public static bool operator ==(CurrencyAmount lhs, CurrencyAmount rhs)
+    public void SetSponsors(params string[] sponsors)
     {
-        if (lhs.currency != rhs.currency) throw new ArgumentException();
-        return lhs.amount == rhs.amount;
+        this.sponsors = new string[sponsors.Length];
+        Array.Copy(sponsors, this.sponsors, sponsors.Length);
     }
 
-    public static bool operator !=(CurrencyAmount lhs, CurrencyAmount rhs) => !(lhs == rhs);
+    public string DisplaySponsor(int sponsorNum) => sponsors[sponsorNum];
 
-    public static bool operator <(CurrencyAmount lhs, CurrencyAmount rhs)
+    public bool GetTelemetryData(ref int serialNum,
+        out int batteryPercentage, out int distanceDrivenInMeters)
     {
-        if (lhs.currency != rhs.currency) throw new ArgumentException();
-        return lhs.amount < rhs.amount;
+        if (serialNum < latestSerialNum)
+        {
+            serialNum = latestSerialNum;
+            batteryPercentage = -1;
+            distanceDrivenInMeters = -1;
+            return false;
+        }
+
+        latestSerialNum = serialNum;
+        batteryPercentage = this.batteryPercentage;
+        distanceDrivenInMeters = this.distanceDrivenInMeters;
+        return true;
     }
 
-    public static bool operator >(CurrencyAmount lhs, CurrencyAmount rhs)
+    public static RemoteControlCar Buy()
     {
-        if (lhs.currency != rhs.currency) throw new ArgumentException();
-        return lhs.amount > rhs.amount;
+        return new RemoteControlCar();
     }
-
-    public static CurrencyAmount operator +(CurrencyAmount lhs, CurrencyAmount rhs)
-    {
-        if (lhs.currency != rhs.currency) throw new ArgumentException();
-        return new() { currency = lhs.currency, amount = lhs.amount + rhs.amount };
-    }
-
-    public static CurrencyAmount operator -(CurrencyAmount lhs, CurrencyAmount rhs)
-    {
-        if (lhs.currency != rhs.currency) throw new ArgumentException();
-        return new() { currency = lhs.currency, amount = lhs.amount - rhs.amount };
-    }
-
-    public static CurrencyAmount operator *(CurrencyAmount lhs, decimal rhs) => new() { currency = lhs.currency, amount = lhs.amount * rhs };
-
-    public static CurrencyAmount operator /(CurrencyAmount lhs, decimal rhs) => new() { currency = lhs.currency, amount = lhs.amount / rhs };
-
-    public static CurrencyAmount operator *(decimal lhs, CurrencyAmount rhs) => rhs * lhs;
-
-    public static CurrencyAmount operator /(decimal lhs, CurrencyAmount rhs) => new() { currency = rhs.currency, amount = lhs / rhs.amount };
-
-    public static explicit operator double(CurrencyAmount lhs) => (double)lhs.amount;
-
-    //public static explicit operator decimal(CurrencyAmount lhs) => lhs.amount;
-
-    public static implicit operator decimal(CurrencyAmount lhs) => lhs.amount;
 }
+
+public class TelemetryClient
+{
+    private RemoteControlCar car;
+
+    public TelemetryClient(RemoteControlCar car)
+    {
+        this.car = car;
+    }
+
+    public string GetBatteryUsagePerMeter(int serialNum)
+    {
+        if (car.GetTelemetryData(ref serialNum, out int battery, out int distance) && distance > 0)
+        {
+            return $"usage-per-meter={(100 - battery) / distance}";
+        }
+        else
+        {
+            return "no data";
+        }
+    }
+}
+
 
 public class Program
 {
