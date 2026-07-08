@@ -1,74 +1,66 @@
-﻿namespace ConsoleApp;
+﻿using ConsoleApp;
 
-public class RemoteControlCar
+namespace ConsoleApp;
+
+public interface Database
 {
-    private int batteryPercentage = 100;
-    private int distanceDrivenInMeters = 0;
-    private string[] sponsors = new string[0];
-    private int latestSerialNum = 0;
-
-    public void Drive()
+    public enum State
     {
-        if (batteryPercentage > 0)
-        {
-            batteryPercentage -= 10;
-            distanceDrivenInMeters += 2;
-        }
+        TransactionStarted,
+        DataWritten,
+        Invalid,
+        Closed
     }
+    public State DbState { get; set; }
 
-    public void SetSponsors(params string[] sponsors)
-    {
-        this.sponsors = new string[sponsors.Length];
-        Array.Copy(sponsors, this.sponsors, sponsors.Length);
-    }
-
-    public string DisplaySponsor(int sponsorNum) => sponsors[sponsorNum];
-
-    public bool GetTelemetryData(ref int serialNum,
-        out int batteryPercentage, out int distanceDrivenInMeters)
-    {
-        if (serialNum < latestSerialNum)
-        {
-            serialNum = latestSerialNum;
-            batteryPercentage = -1;
-            distanceDrivenInMeters = -1;
-            return false;
-        }
-
-        latestSerialNum = serialNum;
-        batteryPercentage = this.batteryPercentage;
-        distanceDrivenInMeters = this.distanceDrivenInMeters;
-        return true;
-    }
-
-    public static RemoteControlCar Buy()
-    {
-        return new RemoteControlCar();
-    }
+    void BeginTransaction();
+    void Write(string data);
+    void EndTransaction();
+    void Dispose();
 }
 
-public class TelemetryClient
+public class Orm: IDisposable
 {
-    private RemoteControlCar car;
+    private Database database;
 
-    public TelemetryClient(RemoteControlCar car)
+    public Orm(Database database)
     {
-        this.car = car;
+        this.database = database;
     }
 
-    public string GetBatteryUsagePerMeter(int serialNum)
+    public void Begin()
     {
-        if (car.GetTelemetryData(ref serialNum, out int battery, out int distance) && distance > 0)
+        if (database.DbState != Database.State.Closed) throw new InvalidOperationException();
+        database.BeginTransaction();
+    }
+
+    public void Write(string data)
+    {
+        if (database.DbState != Database.State.TransactionStarted) throw new InvalidOperationException();
+        try
         {
-            return $"usage-per-meter={(100 - battery) / distance}";
+            database.Write(data);
         }
-        else
+        catch (InvalidOperationException)
         {
-            return "no data";
+            database.Dispose();
         }
     }
+
+    public void Commit()
+    {
+        try
+        {
+            database.EndTransaction();
+        }
+        catch (InvalidOperationException)
+        {
+            database.Dispose();
+        }
+    }
+
+    public void Dispose() => database.Dispose();
 }
-
 
 public class Program
 {
