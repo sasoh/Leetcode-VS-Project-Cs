@@ -1,52 +1,72 @@
-﻿using System;
+﻿using System.Globalization;
 namespace ConsoleApp;
 
-public interface Database
+public enum Location
 {
-    void BeginTransaction();
-    void Write(string data);
-    void EndTransaction();
-    void Dispose();
+    NewYork,
+    London,
+    Paris
 }
 
-public class Orm
+public enum AlertLevel
 {
-    private Database database;
+    Early,
+    Standard,
+    Late
+}
 
-    public Orm(Database database)
+public static class Appointment
+{
+    public static DateTime ShowLocalTime(DateTime dtUtc) => TimeZoneInfo.ConvertTimeFromUtc(dtUtc, TimeZoneInfo.Local);
+
+    public static DateTime Schedule(string appointmentDateDescription, Location location)
     {
-        this.database = database;
+        var tzi =  location switch
+        {
+            Location.NewYork => TimeZoneInfo.FindSystemTimeZoneById("America/New_York"),
+            Location.London => TimeZoneInfo.FindSystemTimeZoneById("Europe/London"),
+            _ => TimeZoneInfo.FindSystemTimeZoneById("Europe/Paris")
+        };
+        return TimeZoneInfo.ConvertTimeToUtc(DateTime.Parse(appointmentDateDescription, CultureInfo.CurrentCulture), tzi);
     }
 
-    public void Write(string data)
+    public static DateTime GetAlertTime(DateTime appointment, AlertLevel alertLevel)
     {
-        try
+        var diff = alertLevel switch
         {
-            database.BeginTransaction();
-            database.Write(data);
-            database.EndTransaction();
-        }
-        catch (InvalidOperationException)
-        {
-            database.Dispose();
-            throw;
-        }
+            AlertLevel.Early => TimeSpan.FromDays(1),
+            AlertLevel.Standard => TimeSpan.FromMinutes(105),
+            _ => TimeSpan.FromMinutes(30)
+        };
+        return appointment.Subtract(diff);
     }
 
-    public bool WriteSafely(string data)
+    public static bool HasDaylightSavingChanged(DateTime dt, Location location)
     {
-        var result = false;
-        try
+        var tzi =  location switch
         {
-            database.BeginTransaction();
-            database.Write(data);
-            database.EndTransaction();
-        }
-        catch
+            Location.NewYork => TimeZoneInfo.FindSystemTimeZoneById("America/New_York"),
+            Location.London => TimeZoneInfo.FindSystemTimeZoneById("Europe/London"),
+            _ => TimeZoneInfo.FindSystemTimeZoneById("Europe/Paris")
+        };
+        var before = tzi.IsDaylightSavingTime(dt.Subtract(TimeSpan.FromDays(7)));
+        var now = tzi.IsDaylightSavingTime(dt);
+        return before != now;
+    }
+
+    public static DateTime NormalizeDateTime(string dtStr, Location location)
+    {
+        var ci =  location switch
         {
-            database.Dispose();
+            Location.NewYork => CultureInfo.CreateSpecificCulture("en-US"),
+            Location.London => CultureInfo.CreateSpecificCulture("en-UK"),
+            _ => CultureInfo.CreateSpecificCulture("fr-FR")
+        };
+        if (DateTime.TryParse(dtStr, ci, out var dt))
+        {
+            return dt;
         }
-        return result;
+        return new DateTime(1, 1, 1);
     }
 }
 
