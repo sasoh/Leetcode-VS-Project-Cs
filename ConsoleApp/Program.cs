@@ -1,41 +1,41 @@
-﻿using System.Collections;
+﻿namespace ConsoleApp;
 
-namespace ConsoleApp;
-
-public class SimpleLinkedList<T>: IEnumerable<T>
+public class HighScores(List<int> scores)
 {
-    private readonly Stack<T> _stack = [];
+    private readonly List<int> _scores = scores;
 
-    public int Count => _stack.Count;
+    public List<int> Scores() => _scores;
 
-    public SimpleLinkedList() { }
-    public SimpleLinkedList(T value) => Push(value);
-    public SimpleLinkedList(IEnumerable<T> values)
+    public int Latest() => _scores[^1];
+
+    public int PersonalBest()
     {
-        foreach (var item in values)
+        var best = int.MinValue;
+        foreach (var score in _scores)
         {
-            Push(item);
+            if (score > best) {
+                best = score;
+            }
         }
+        return best;
     }
 
-    public void Push(T value) => _stack.Push(value);
-
-    public T Pop() => _stack.Pop();
-
-    public IEnumerator GetEnumerator() => _stack.GetEnumerator();
-    IEnumerator<T> IEnumerable<T>.GetEnumerator() => _stack.GetEnumerator();
+    public List<int> PersonalTopThree()
+    {
+        var s = _scores.ToArray();
+        s.Sort();
+        int min = Math.Min(_scores.Count, 3);
+        var list = new List<int>();
+        for (var i = 0; i < min; ++i) {
+            list.Add(s[^(i + 1)]);
+        }
+        return list;
+    }
 }
 
 public class Program
 {
     public static void Main(string[] args)
     {
-        SimpleLinkedList<int> l = new(3);
-        Console.WriteLine(l.Count);
-        l.Push(2);
-        Console.WriteLine(l.Pop());
-        Console.WriteLine(l.Count);
-        Console.WriteLine(l.Pop());
-        Console.WriteLine(l.Count);
     }
 }
