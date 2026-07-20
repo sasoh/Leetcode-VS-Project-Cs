@@ -1,86 +1,41 @@
-﻿using System.Globalization;
+﻿using System.Collections;
+
 namespace ConsoleApp;
 
-public enum Location
+public class SimpleLinkedList<T>: IEnumerable<T>
 {
-    NewYork,
-    London,
-    Paris
-}
+    private readonly Stack<T> _stack = [];
 
-public enum AlertLevel
-{
-    Early,
-    Standard,
-    Late
-}
+    public int Count => _stack.Count;
 
-public static class Appointment
-{
-    public static DateTime ShowLocalTime(DateTime dtUtc) => TimeZoneInfo.ConvertTimeFromUtc(dtUtc, TimeZoneInfo.Local);
-
-    public static DateTime Schedule(string appointmentDateDescription, Location location)
+    public SimpleLinkedList() { }
+    public SimpleLinkedList(T value) => Push(value);
+    public SimpleLinkedList(IEnumerable<T> values)
     {
-        var tzi =  location switch
+        foreach (var item in values)
         {
-            Location.NewYork => TimeZoneInfo.FindSystemTimeZoneById("America/New_York"),
-            Location.London => TimeZoneInfo.FindSystemTimeZoneById("Europe/London"),
-            _ => TimeZoneInfo.FindSystemTimeZoneById("Europe/Paris")
-        };
-        return TimeZoneInfo.ConvertTimeToUtc(DateTime.Parse(appointmentDateDescription, CultureInfo.CurrentCulture), tzi);
-    }
-
-    public static DateTime GetAlertTime(DateTime appointment, AlertLevel alertLevel)
-    {
-        var diff = alertLevel switch
-        {
-            AlertLevel.Early => TimeSpan.FromDays(1),
-            AlertLevel.Standard => TimeSpan.FromMinutes(105),
-            _ => TimeSpan.FromMinutes(30)
-        };
-        return appointment.Subtract(diff);
-    }
-
-    public static bool HasDaylightSavingChanged(DateTime dt, Location location)
-    {
-        var tzi =  location switch
-        {
-            Location.NewYork => TimeZoneInfo.FindSystemTimeZoneById("America/New_York"),
-            Location.London => TimeZoneInfo.FindSystemTimeZoneById("Europe/London"),
-            _ => TimeZoneInfo.FindSystemTimeZoneById("Europe/Paris")
-        };
-        var before = tzi.IsDaylightSavingTime(dt.Subtract(TimeSpan.FromDays(7)));
-        var now = tzi.IsDaylightSavingTime(dt);
-        return before != now;
-    }
-
-    public static DateTime NormalizeDateTime(string dtStr, Location location)
-    {
-        var ci =  location switch
-        {
-            Location.NewYork => CultureInfo.CreateSpecificCulture("en-US"),
-            Location.London => CultureInfo.CreateSpecificCulture("en-UK"),
-            _ => CultureInfo.CreateSpecificCulture("fr-FR")
-        };
-        if (DateTime.TryParse(dtStr, ci, out var dt))
-        {
-            return dt;
+            Push(item);
         }
-        return new DateTime(1, 1, 1);
     }
+
+    public void Push(T value) => _stack.Push(value);
+
+    public T Pop() => _stack.Pop();
+
+    public IEnumerator GetEnumerator() => _stack.GetEnumerator();
+    IEnumerator<T> IEnumerable<T>.GetEnumerator() => _stack.GetEnumerator();
 }
 
 public class Program
 {
-    private static void RunTests()
-    {
-        Console.WriteLine("Running tests");
-        
-        Console.WriteLine("Finished tests");
-    }
-
     public static void Main(string[] args)
     {
-        RunTests();
+        SimpleLinkedList<int> l = new(3);
+        Console.WriteLine(l.Count);
+        l.Push(2);
+        Console.WriteLine(l.Pop());
+        Console.WriteLine(l.Count);
+        Console.WriteLine(l.Pop());
+        Console.WriteLine(l.Count);
     }
 }
