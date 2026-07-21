@@ -1,23 +1,28 @@
-﻿namespace ConsoleApp;
+﻿using System.Text;
 
-public class Queen
+namespace ConsoleApp;
+
+public static class RnaTranscription
 {
-    public Queen(int row, int column)
+    private static readonly Dictionary<char, char> _map = new()
     {
-        if (row < 0 || column < 0 || row > 7 || column > 7) throw new ArgumentOutOfRangeException();
-        Row = row;
-        Column = column;
+        ['A'] = 'U',
+        ['C'] = 'G',
+        ['G'] = 'C',
+        ['T'] = 'A',
+    };
+
+    public static string ToRna(string strand)
+    {
+        var sb = new StringBuilder();
+
+        foreach (char c in strand)
+        {
+            sb.Append(_map[c]);
+        }
+
+        return sb.ToString();
     }
-
-    public int Row { get; }
-    public int Column { get; }
-}
-
-public static class QueenAttack
-{
-    public static bool CanAttack(Queen white, Queen black) => (white.Column == black.Column) || (white.Row == black.Row) || (Math.Abs(white.Column - black.Column) == Math.Abs(white.Row - black.Row));
-
-    public static Queen Create(int row, int column) => new Queen(row, column);
 }
 
 public class Program
