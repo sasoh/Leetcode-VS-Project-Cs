@@ -1,22 +1,23 @@
 ﻿namespace ConsoleApp;
 
-public static class NucleotideCount
+public class Queen
 {
-    public static IDictionary<char, int> Count(string sequence)
+    public Queen(int row, int column)
     {
-        var r = new Dictionary<char, int> { 
-            ['A'] = 0,
-            ['C'] = 0,
-            ['G'] = 0,
-            ['T'] = 0,
-        };
-        foreach (var c in sequence)
-        {
-            if (!r.TryGetValue(c, out int value)) throw new ArgumentException();
-            r[c] = ++value;
-        }
-        return r;
+        if (row < 0 || column < 0 || row > 7 || column > 7) throw new ArgumentOutOfRangeException();
+        Row = row;
+        Column = column;
     }
+
+    public int Row { get; }
+    public int Column { get; }
+}
+
+public static class QueenAttack
+{
+    public static bool CanAttack(Queen white, Queen black) => (white.Column == black.Column) || (white.Row == black.Row) || (Math.Abs(white.Column - black.Column) == Math.Abs(white.Row - black.Row));
+
+    public static Queen Create(int row, int column) => new Queen(row, column);
 }
 
 public class Program
