@@ -1,17 +1,10 @@
 ﻿namespace ConsoleApp;
 
-public static class Hamming
+public static class TwoFer
 {
-    public static int Distance(string firstStrand, string secondStrand)
-    {
-        if (firstStrand.Length != secondStrand.Length) throw new ArgumentException();
-        var distance = 0;
-        for (var i = 0; i < firstStrand.Length; ++i) {
-            if (firstStrand[i] != secondStrand[i]) distance++;
-        }
-        return distance;
-    }
+    public static string Speak(string name = "") => string.IsNullOrEmpty(name) ? "One for you, one for me." : $"One for {name}, one for me.";
 }
+
 
 public class Program
 {
