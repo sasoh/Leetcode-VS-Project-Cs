@@ -2,25 +2,27 @@
 
 namespace ConsoleApp;
 
-public static class RnaTranscription
+public static class Raindrops
 {
-    private static readonly Dictionary<char, char> _map = new()
-    {
-        ['A'] = 'U',
-        ['C'] = 'G',
-        ['G'] = 'C',
-        ['T'] = 'A',
-    };
-
-    public static string ToRna(string strand)
+    public static string Convert(int number)
     {
         var sb = new StringBuilder();
-
-        foreach (char c in strand)
+        if (number % 3 == 0)
         {
-            sb.Append(_map[c]);
+            sb.Append("Pling");
         }
-
+        if (number % 5 == 0)
+        {
+            sb.Append("Plang");
+        }
+        if (number % 7 == 0)
+        {
+            sb.Append("Plong");
+        }
+        if (sb.Length == 0)
+        {
+            sb.Append(number.ToString());
+        }
         return sb.ToString();
     }
 }
