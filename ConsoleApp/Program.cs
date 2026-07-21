@@ -1,10 +1,23 @@
 ﻿namespace ConsoleApp;
 
-public static class TwoFer
+public static class NucleotideCount
 {
-    public static string Speak(string name = "") => string.IsNullOrEmpty(name) ? "One for you, one for me." : $"One for {name}, one for me.";
+    public static IDictionary<char, int> Count(string sequence)
+    {
+        var r = new Dictionary<char, int> { 
+            ['A'] = 0,
+            ['C'] = 0,
+            ['G'] = 0,
+            ['T'] = 0,
+        };
+        foreach (var c in sequence)
+        {
+            if (!r.TryGetValue(c, out int value)) throw new ArgumentException();
+            r[c] = ++value;
+        }
+        return r;
+    }
 }
-
 
 public class Program
 {
