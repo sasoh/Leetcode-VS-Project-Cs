@@ -1,46 +1,23 @@
-﻿namespace ConsoleApp;
+﻿using System.Text;
 
-public class GradeSchool
+namespace ConsoleApp;
+
+// Generate a new string by changing each character in word to its next character in the English alphabet,
+// and append it to the original word.
+// For example, performing the operation on "c" generates "cd" and performing the operation on "zb" generates "zbac".
+// Return the value of the kth character in word, after enough operations have been done for word to have at least k characters.
+
+public class Solution
 {
-    private readonly Dictionary<int, List<string>> _students = [];
-
-    public bool Add(string student, int grade)
+    public char KthCharacter(int k)
     {
-        var r = !_students.Any(x => x.Value.Contains(student));
-        if (!_students.ContainsKey(grade))
+        var word = new List<char> {'a'};
+        while (word.Count < k)
         {
-            _students.Add(grade, []);
+            word.AddRange(word.Select(t => (char) (t + 1)).ToList());
         }
 
-        if (!_students.Any(x => x.Value.Contains(student)))
-        {
-            _students[grade].Add(student);
-        }
-
-        return r;
-    }
-
-    public IEnumerable<string> Roster()
-    {
-        var orderedGrades = _students.Keys.OrderBy(x => x);
-        foreach (var grade in orderedGrades)
-        {
-            var orderedStudents = _students[grade].OrderBy(x => x);
-            foreach (var student in orderedStudents)
-            {
-                yield return student;
-            }
-        }
-    }
-
-    public IEnumerable<string> Grade(int grade)
-    {
-        if (!_students.TryGetValue(grade, out var students)) yield break;
-        var orderedStudents = _students[grade].OrderBy(x => x);
-        foreach (var student in orderedStudents)
-        {
-            yield return student;
-        }
+        return word[k - 1];
     }
 }
 
@@ -48,5 +25,8 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        var s = new Solution();
+        Console.WriteLine(s.KthCharacter(5));
+        // Console.WriteLine(s.KthCharacter(10));
     }
 }
