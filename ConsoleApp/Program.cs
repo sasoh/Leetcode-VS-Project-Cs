@@ -1,29 +1,34 @@
-﻿using System.Text;
+﻿namespace ConsoleApp;
 
-namespace ConsoleApp;
-
-public static class Raindrops
+[Flags]
+public enum Allergen
 {
-    public static string Convert(int number)
+    Eggs = 1 << 0,
+    Peanuts = 1 << 1,
+    Shellfish = 1 << 2,
+    Strawberries = 1 << 3,
+    Tomatoes = 1 << 4,
+    Chocolate = 1 << 5,
+    Pollen = 1 << 6,
+    Cats = 1 << 7
+}
+
+public class Allergies
+{
+    private Allergen _allergies;
+
+    public Allergies(int mask) => _allergies = (Allergen)mask;
+
+    public bool IsAllergicTo(Allergen allergen) => (_allergies & allergen) != 0;
+
+    public Allergen[] List()
     {
-        var sb = new StringBuilder();
-        if (number % 3 == 0)
-        {
-            sb.Append("Pling");
+        var l = new List<Allergen>();
+        foreach (var a in Enum.GetValues<Allergen>()) {
+            if (!IsAllergicTo(a)) continue;
+            l.Add(a);
         }
-        if (number % 5 == 0)
-        {
-            sb.Append("Plang");
-        }
-        if (number % 7 == 0)
-        {
-            sb.Append("Plong");
-        }
-        if (sb.Length == 0)
-        {
-            sb.Append(number.ToString());
-        }
-        return sb.ToString();
+        return [.. l];
     }
 }
 
