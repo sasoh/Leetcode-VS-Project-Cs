@@ -1,29 +1,43 @@
-﻿using System.Text;
+﻿namespace ConsoleApp;
 
-namespace ConsoleApp;
-
-public static class RotationalCipher
+public class Clock : IEquatable<Clock>
 {
-    public static string Rotate(string text, int shiftKey)
-    {
-        var rotation = shiftKey % 26;
-        var sb = new StringBuilder();
-        foreach (var c in text)
-        {
-            if (!char.IsLetter(c)) {
-                sb.Append(c);
-                continue;
-            }
+    private readonly int _minutes = 0;
+    private readonly int _hours = 0;
 
-            var startChar = char.IsUpper(c)? 'A' : 'a';
-            var offset = c - startChar;
-            offset += rotation;
-            offset %= 26;
-            var newC = (char) (startChar + offset);
-            sb.Append(newC);
+    public Clock(int hours, int minutes)
+    {
+        var totalMinutes = minutes + hours * 60;
+        while (totalMinutes < 0)
+        {
+            totalMinutes = 24 * 60 + totalMinutes;
         }
-        return sb.ToString();
+
+        _hours = (totalMinutes / 60) % 24;
+        _minutes = totalMinutes % 60;
     }
+
+    public Clock Add(int minutesToAdd) => new(_hours, _minutes + minutesToAdd);
+
+    public Clock Subtract(int minutesToSubtract) => new(_hours, _minutes - minutesToSubtract);
+
+    public bool Equals(Clock? other)
+    {
+        if (other is null) return false;
+        return _minutes == other._minutes && _hours == other._hours;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((Clock) obj);
+    }
+
+    public override int GetHashCode() => HashCode.Combine(_minutes, _hours);
+
+    public override string ToString() => $"{_hours:00}:{_minutes:00}";
 }
 
 public class Program
