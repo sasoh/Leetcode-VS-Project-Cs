@@ -1,21 +1,25 @@
-﻿using System.Text;
-
-public class PhoneNumber
+﻿public static class ScrabbleScore
 {
-    public static string Clean(string phoneNumber)
+    private static int ScoreForLetter(char letter) => letter switch
     {
-        var sb = new StringBuilder();
-        for (var i = 0; i < phoneNumber.Length; i++)
+        'D' or 'G' => 2,
+        'B' or 'C' or 'M' or 'P' => 3,
+        'F' or 'H' or 'V' or 'W' or 'Y' => 4,
+        'K' => 5,
+        'J' or 'X' => 8,
+        'Q' or 'Z' => 10,
+        //'A' or 'E' or 'I' or 'O' or 'U' or 'L' or 'N' or 'R' or 'S' or 'T' => 1,
+        _ => 1
+    };
+
+    public static int Score(string input)
+    {
+        var sum = 0;
+        foreach (char letter in input)
         {
-            char c = phoneNumber[i];
-            if (!char.IsDigit(c)) continue;
-            if (sb.Length == 0 && c == '1') continue;
-            sb.Append(c);
+            sum += ScoreForLetter(char.ToUpper(letter));
         }
-
-        if (sb.Length != 10 || int.Parse(sb[0].ToString()) < 2 || int.Parse(sb[3].ToString()) < 2) throw new ArgumentException();
-
-        return sb.ToString();
+        return sum;
     }
 }
 
@@ -23,10 +27,5 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        Console.WriteLine(PhoneNumber.Clean("+1 (613)-995-0253"));
-        Console.WriteLine(PhoneNumber.Clean("613-995-0253"));
-        Console.WriteLine(PhoneNumber.Clean("1 613 995 0253"));
-        Console.WriteLine(PhoneNumber.Clean("613.995.0253"));
-        Console.WriteLine(PhoneNumber.Clean("(023) 456-7890"));
     }
 }
