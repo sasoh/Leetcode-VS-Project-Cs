@@ -1,27 +1,33 @@
-﻿public static class ScrabbleScore
+﻿public static class ResistorColorDuo
 {
-    private static int ScoreForLetter(char letter) => letter switch
+    private static int ResistanceForKey(string key) => key switch
     {
-        'D' or 'G' => 2,
-        'B' or 'C' or 'M' or 'P' => 3,
-        'F' or 'H' or 'V' or 'W' or 'Y' => 4,
-        'K' => 5,
-        'J' or 'X' => 8,
-        'Q' or 'Z' => 10,
-        //'A' or 'E' or 'I' or 'O' or 'U' or 'L' or 'N' or 'R' or 'S' or 'T' => 1,
-        _ => 1
+        "black" => 0,
+        "brown" => 1,
+        "red" => 2,
+        "orange" => 3,
+        "yellow" => 4,
+        "green" => 5,
+        "blue" => 6,
+        "violet" => 7,
+        "grey" => 8,
+        "white" => 9,
+        _ => throw new NotImplementedException(),
     };
 
-    public static int Score(string input)
+    public static int Value(string[] colors)
     {
         var sum = 0;
-        foreach (char letter in input)
+        for (var i = 0; i < colors.Length; i++)
         {
-            sum += ScoreForLetter(char.ToUpper(letter));
+            var resistance = ResistanceForKey(colors[i]);
+            sum += resistance * (int)Math.Pow(10, colors.Length - i - 1);
         }
+
         return sum;
     }
 }
+
 
 public class Program
 {
