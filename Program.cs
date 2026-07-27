@@ -1,16 +1,18 @@
-﻿public static class Series
+﻿public static class SumOfMultiples
 {
-    public static string[] Slices(string numbers, int sliceLength)
+    public static int Sum(IEnumerable<int> multiples, int max)
     {
-        if (sliceLength < 1 || numbers.Length < sliceLength) throw new ArgumentException();
-        ArgumentException.ThrowIfNullOrEmpty(numbers);
-
-        var slices = new List<string>();
-        for (int i = 0, limit = numbers.Length - sliceLength; i <= limit; i++) {
-            slices.Add(numbers[i..(i + sliceLength)]);
+        var allMultiples = new HashSet<int>();
+        foreach (var multiple in multiples)
+        {
+            for (var i = 1; i < max; ++i)
+            {
+                if (i * multiple >= max) continue;
+                allMultiples.Add(i * multiple);
+            }
         }
 
-        return [.. slices];
+        return allMultiples.Sum();
     }
 }
 
@@ -18,6 +20,6 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        Console.WriteLine(string.Join(", ", Series.Slices("123456", 3)));
+        SumOfMultiples.Sum([2, 3], 10);
     }
 }
