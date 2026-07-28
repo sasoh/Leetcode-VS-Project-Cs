@@ -1,30 +1,16 @@
-﻿public static class ArmstrongNumbers
+﻿public static class Proverb
 {
-    public static bool IsArmstrongNumber(int number)
+    public static string[] Recite(string[] subjects)
     {
-        int numberOfDigits = CountDigits(number);
-        int sum = 0;
-        int temp = number;
-        for (var i = 0; i < numberOfDigits; ++i)
+        if (subjects.Length == 0) return [];
+        var lines = new List<string>();
+        for (var i = 0; i < subjects.Length - 1; i++)
         {
-            var digit = temp % 10;
-            temp /= 10;
-            sum += (int)Math.Pow(digit, numberOfDigits);
+            lines.Add($"For want of a {subjects[i]} the {subjects[i + 1]} was lost.");
         }
+        lines.Add($"And all for the want of a {subjects[0]}.");
 
-        return sum == number;
-    }
-
-    private static int CountDigits(int number)
-    {
-        var counter = 0;
-        while (number > 0)
-        {
-            counter++;
-            number /= 10;
-        }
-
-        return counter;
+        return [.. lines];
     }
 }
 
@@ -32,11 +18,5 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        ArmstrongNumbers.IsArmstrongNumber(5);
-        ArmstrongNumbers.IsArmstrongNumber(54);
-        ArmstrongNumbers.IsArmstrongNumber(554);
-        ArmstrongNumbers.IsArmstrongNumber(5454);
-        ArmstrongNumbers.IsArmstrongNumber(51354);
-        ArmstrongNumbers.IsArmstrongNumber(513554);
     }
 }
