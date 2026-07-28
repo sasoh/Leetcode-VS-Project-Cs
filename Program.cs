@@ -1,25 +1,30 @@
-﻿public static class PascalsTriangle
+﻿public static class ArmstrongNumbers
 {
-    public static IEnumerable<IEnumerable<int>> Calculate(int rows)
+    public static bool IsArmstrongNumber(int number)
     {
-        var r = new List<List<int>>();
-        for (var i = 0; i < rows; i++)
+        int numberOfDigits = CountDigits(number);
+        int sum = 0;
+        int temp = number;
+        for (var i = 0; i < numberOfDigits; ++i)
         {
-            var row = new List<int> { 1 };
-            if (i > 0)
-            {
-                var rowAbove = r[i - 1];
-                for (var j = 1; j < i; j++)
-                {
-                    row.Add(rowAbove[j - 1] + rowAbove[j]);
-                }
-
-                row.Add(1);
-            }
-            r.Add(row);
+            var digit = temp % 10;
+            temp /= 10;
+            sum += (int)Math.Pow(digit, numberOfDigits);
         }
 
-        return r;
+        return sum == number;
+    }
+
+    private static int CountDigits(int number)
+    {
+        var counter = 0;
+        while (number > 0)
+        {
+            counter++;
+            number /= 10;
+        }
+
+        return counter;
     }
 }
 
@@ -27,6 +32,11 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        PascalsTriangle.Calculate(4);
+        ArmstrongNumbers.IsArmstrongNumber(5);
+        ArmstrongNumbers.IsArmstrongNumber(54);
+        ArmstrongNumbers.IsArmstrongNumber(554);
+        ArmstrongNumbers.IsArmstrongNumber(5454);
+        ArmstrongNumbers.IsArmstrongNumber(51354);
+        ArmstrongNumbers.IsArmstrongNumber(513554);
     }
 }
