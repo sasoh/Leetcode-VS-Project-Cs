@@ -1,16 +1,33 @@
-﻿public static class Proverb
+﻿public static class Strain
 {
-    public static string[] Recite(string[] subjects)
+    public static IEnumerable<T> Keep<T>(this IEnumerable<T> collection, Func<T, bool> predicate)
     {
-        if (subjects.Length == 0) return [];
-        var lines = new List<string>();
-        for (var i = 0; i < subjects.Length - 1; i++)
+        var kept = new List<T>();
+        foreach (var e in collection)
         {
-            lines.Add($"For want of a {subjects[i]} the {subjects[i + 1]} was lost.");
+            if (!predicate(e)) continue;
+            kept.Add(e);
         }
-        lines.Add($"And all for the want of a {subjects[0]}.");
 
-        return [.. lines];
+        foreach (var e in kept)
+        {
+            yield return e;
+        }
+    }
+
+    public static IEnumerable<T> Discard<T>(this IEnumerable<T> collection, Func<T, bool> predicate)
+    {
+        var kept = new List<T>();
+        foreach (var e in collection)
+        {
+            if (predicate(e)) continue;
+            kept.Add(e);
+        }
+
+        foreach (var e in kept)
+        {
+            yield return e;
+        }
     }
 }
 
