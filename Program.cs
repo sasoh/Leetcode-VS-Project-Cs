@@ -1,33 +1,37 @@
-﻿public static class Strain
+﻿public static class SecretHandshake
 {
-    public static IEnumerable<T> Keep<T>(this IEnumerable<T> collection, Func<T, bool> predicate)
+    private enum Action
     {
-        var kept = new List<T>();
-        foreach (var e in collection)
-        {
-            if (!predicate(e)) continue;
-            kept.Add(e);
-        }
-
-        foreach (var e in kept)
-        {
-            yield return e;
-        }
+        Wink = 1 << 0,
+        DoubleBlink = 1 << 1,
+        CloseYourEyes = 1 << 2,
+        Jump = 1 << 3,
+        Reverse = 1 << 4,
     }
 
-    public static IEnumerable<T> Discard<T>(this IEnumerable<T> collection, Func<T, bool> predicate)
+    public static string[] Commands(int commandValue)
     {
-        var kept = new List<T>();
-        foreach (var e in collection)
+        var commands = new List<string>();
+
+        foreach (Action a in Enum.GetValues<Action>())
         {
-            if (predicate(e)) continue;
-            kept.Add(e);
+            if ((commandValue & (int)a) == 0) continue;
+            if (a == Action.Reverse)
+            {
+                commands.Reverse();
+            }
+            else
+            {
+                commands.Add(a switch
+                {
+                    Action.DoubleBlink => "double blink",
+                    Action.CloseYourEyes => "close your eyes",
+                    _ => a.ToString().ToLower()
+                });
+            }
         }
 
-        foreach (var e in kept)
-        {
-            yield return e;
-        }
+        return [.. commands];
     }
 }
 
@@ -35,5 +39,6 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        SecretHandshake.Commands(26);
     }
 }
