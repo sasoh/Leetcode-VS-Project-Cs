@@ -1,42 +1,31 @@
-﻿public enum Direction
+﻿public static class ErrorHandling
 {
-    North,
-    East,
-    South,
-    West
-}
+    public static void HandleErrorByThrowingException() => throw new Exception();
 
-public class RobotSimulator(Direction Direction, int X, int Y)
-{
-    public Direction Direction { get; private set; } = Direction;
-
-    public int X { get; private set; } = X;
-
-    public int Y { get; private set; } = Y;
-
-    public void Move(string instructions)
+    public static int? HandleErrorByReturningNullableType(string input)
     {
-        foreach (char instruction in instructions)
+        if (int.TryParse(input, out var r))
         {
-            X += instruction switch
-            {
-                'A' when Direction is Direction.East => 1,
-                'A' when Direction is Direction.West => -1,
-                _ => 0
-            };
-            Y += instruction switch
-            {
-                'A' when Direction is Direction.North => 1,
-                'A' when Direction is Direction.South => -1,
-                _ => 0
-            };
-            Direction = instruction switch
-            {
-                'L' => (Direction)((int)(Direction - 1) < 0 ? (int)Direction.West : (int)(Direction - 1)),
-                'R' => (Direction)((int)(Direction + 1) % Enum.GetValues<Direction>().Length),
-                _ => Direction,
-            };
+            return r;
         }
+        return default;
+    }
+
+    public static bool HandleErrorWithOutParam(string input, out int result)
+    {
+        if (int.TryParse(input, out var r))
+        {
+            result = r;
+            return true;
+        }
+        result = -1;
+        return false;
+    }
+
+    public static void DisposableResourcesAreDisposedWhenExceptionIsThrown(IDisposable disposableObject)
+    {
+        using var p = disposableObject;
+        throw new Exception();
     }
 }
 
